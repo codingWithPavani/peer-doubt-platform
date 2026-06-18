@@ -1,0 +1,52 @@
+{% extends 'qa/base.html' %}
+
+{% block content %}
+
+<h2>{{ question.title }}</h2>
+
+<p>{{ question.body }}</p>
+
+<p>
+    Tags:
+    {{ question.tags }}
+</p>
+
+<hr>
+
+<h3>Answers</h3>
+
+{% for answer in answers %}
+
+<div class="card">
+
+    <p>{{ answer.body }}</p>
+
+    <small>
+        By {{ answer.author.username }}
+    </small>
+
+</div>
+
+{% empty %}
+
+<p>No answers yet.</p>
+
+{% endfor %}
+
+<hr>
+
+<h3>Add Answer</h3>
+
+<form method="POST">
+
+    {% csrf_token %}
+
+    {{ form.as_p }}
+
+    <button type="submit">
+        Post Answer
+    </button>
+
+</form>
+
+{% endblock %}

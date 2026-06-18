@@ -1,0 +1,41 @@
+{% extends 'qa/base.html' %}
+
+{% block content %}
+
+<h1>My Profile</h1>
+
+<h2>My Questions</h2>
+
+{% for q in questions %}
+
+<div class="card">
+
+    {{ q.title }}
+
+</div>
+
+{% empty %}
+
+<p>No questions posted.</p>
+
+{% endfor %}
+
+<hr>
+
+<h2>My Answers</h2>
+
+{% for a in answers %}
+
+<div class="card">
+
+    {{ a.body }}
+
+</div>
+
+{% empty %}
+
+<p>No answers posted.</p>
+
+{% endfor %}
+
+{% endblock %}
