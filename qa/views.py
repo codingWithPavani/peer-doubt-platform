@@ -132,7 +132,7 @@ def profile(request):
 
     questions = Question.objects.filter(
         author=request.user
-    )
+    ).exclude(id__isnull=True)
 
     answers = Answer.objects.filter(
         author=request.user
@@ -148,13 +148,30 @@ def profile(request):
     )
 
 
-def register(request):
+from django.http import HttpResponse
+from django.contrib.auth.models import User
+from django.shortcuts import redirect, render
+from django.contrib import messages
 
-    if request.method == 'POST':
+
+def register(request):
+    if request.method == "POST":
 
         username = request.POST['username']
         password = request.POST['password']
+        confirm_password = request.POST['confirm_password']
 
+        # ✅ 2. USER EXISTS CHECK
+        if User.objects.filter(username=username).exists():
+            messages.error(request, "Username already exists")
+            return render(request, 'qa/register.html')
+
+        # ✅ 1. PASSWORD CHECK (must STOP execution)
+        if password != confirm_password:
+            messages.error(request, "Passwords do not match")
+            return render(request, 'qa/register.html')   # 🔥 IMPORTANT
+
+        # ✅ 3. CREATE USER ONLY IF VALID
         User.objects.create_user(
             username=username,
             password=password
@@ -162,10 +179,7 @@ def register(request):
 
         return redirect('login')
 
-    return render(
-        request,
-        'qa/register.html'
-    )
+    return render(request, 'qa/register.html')
 
 
 def user_login(request):
@@ -198,3 +212,29 @@ def user_logout(request):
     logout(request)
 
     return redirect('home')
+
+
+def edit_question(request, pk):
+    question = Question.objects.get(id=pk)
+
+    if request.method == "POST":
+        form = QuestionForm(request.POST, instance=question)
+        if form.is_valid():
+            form.save()
+            return redirect('profile')
+
+    else:
+        form = QuestionForm(instance=question)
+
+    return render(request, 'qa/edit_question.html', {'form': form})
+
+
+
+def delete_question(request, pk):
+    question = Question.objects.get(id=pk)
+
+    if request.method == "POST":
+        question.delete()
+        return redirect('profile')
+
+    return render(request, 'qa/confirm_delete.html', {'question': question})

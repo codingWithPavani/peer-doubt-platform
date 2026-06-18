@@ -2,28 +2,204 @@
 
 {% block content %}
 
-<h2>Register</h2>
+<style>
 
-<form method="POST">
+/* ===== WRAPPER ===== */
+.register-wrapper{
+    height: 90vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #f5f7fb;
+    padding: 20px;
+}
 
-    {% csrf_token %}
+/* ===== CARD ===== */
+.register-card{
+    width: 100%;
+    width: 450px;
+    max-width: 90%;
+    background: white;
+    padding: 45px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
 
-    <input type="text"
-           name="username"
-           placeholder="Username">
+/* TITLE */
+.register-title{
+    text-align: center;
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 25px;
+}
 
-    <br><br>
+/* INPUT WRAPPER (for eye icon) */
+.input-group{
+    position: relative;
+    margin-bottom: 15px;
+}
 
-    <input type="password"
-           name="password"
-           placeholder="Password">
+/* INPUT */
+.input-group input{
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid #e0e6ed;
+    background: #fafbfc;
+    font-size: 14px;
+    transition: 0.2s;
+}
 
-    <br><br>
 
-    <button type="submit">
-        Register
-    </button>
 
-</form>
+.input-group input:focus{
+    outline: none;
+    border-color: #4a90d9;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(74,144,217,0.12);
+}
+
+/* EYE ICON */
+.eye{
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #888;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s;
+}
+
+.eye:hover{
+    color: #4a90d9;
+}
+
+/* BUTTON */
+.register-btn{
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(135deg,#4a90d9,#357abd);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.register-btn:hover{
+    transform: translateY(-2px);
+}
+
+/* FOOTER */
+.footer-text{
+    text-align: center;
+    margin-top: 15px;
+    font-size: 13px;
+    color: #666;
+}
+
+.footer-text a{
+    color: #4a90d9;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+</style>
+
+<div class="register-wrapper">
+
+    <div class="register-card">
+
+        <div class="register-title">
+            Create Account
+        </div>
+        {% if messages %}
+            {% for message in messages %}
+                <p style="color:red; text-align:center; margin-bottom:10px;">
+                    {{ message }}
+                </p>
+            {% endfor %}
+        {% endif %}
+        <form method="POST">
+
+            {% csrf_token %}
+
+            <!-- USERNAME -->
+            <div class="input-group">
+                <input type="text" name="username" placeholder="Username" required>
+            </div>
+
+            <!-- PASSWORD -->
+            <div class="input-group">
+                <input type="password" name="password" placeholder="Password" required>
+
+                <span class="eye" onclick="togglePassword(this)">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </span>
+            </div>
+
+            <!-- CONFIRM PASSWORD -->
+            <div class="input-group">
+                <input type="password" name="confirm_password" placeholder="Confirm Password" required>
+
+                <span class="eye" onclick="togglePassword(this)">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </span>
+            </div>
+
+            <button type="submit" class="register-btn">
+                Register
+            </button>
+
+        </form>
+
+        <div class="footer-text">
+            Already have an account? <a href="{% url 'login' %}">Login</a>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+function togglePassword(el){
+
+    let input = el.parentElement.querySelector("input");
+
+    if(input.type === "password"){
+        input.type = "text";
+
+        el.innerHTML = `
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a21.77 21.77 0 0 1 5.06-5.94"></path>
+                <path d="M1 1l22 22"></path>
+            </svg>
+        `;
+    } else {
+        input.type = "password";
+
+        el.innerHTML = `
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+        `;
+    }
+}
+</script>
 
 {% endblock %}

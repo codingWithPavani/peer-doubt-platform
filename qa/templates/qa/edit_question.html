@@ -1,0 +1,53 @@
+{% extends 'qa/base.html' %}
+
+{% block content %}
+
+<style>
+.edit-container{
+    max-width: 700px;
+    margin: 40px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+
+.edit-container h2{
+    margin-bottom: 20px;
+    color: #1a1a2e;
+}
+
+form input, form textarea{
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+button{
+    background: #4a90d9;
+    color: white;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+</style>
+
+<div class="edit-container">
+
+    <h2>Edit Question</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <button type="submit">
+            Save Changes
+        </button>
+    </form>
+
+</div>
+
+{% endblock %}

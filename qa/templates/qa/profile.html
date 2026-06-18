@@ -2,40 +2,432 @@
 
 {% block content %}
 
-<h1>My Profile</h1>
+<style>
+/* ===== GLOBAL RESET & BASE ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-<h2>My Questions</h2>
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f4f6f8;
+    color: #2c3e50;
+    line-height: 1.6;
+}
 
-{% for q in questions %}
+/* ===== PAGE WRAPPER ===== */
+.profile-container {
+    width: 100%;
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 0 20px;
+    box-sizing: border-box;
+}
 
-<div class="card">
+/* ===== PROFILE HEADER CARD ===== */
+.profile-header-card {
+    background: linear-gradient(135deg, #4a90d9, #357abd);
+    color: white;
+    padding: 28px 32px;
+    border-radius: 16px;
+    box-shadow: 0 6px 20px rgba(74, 144, 217, 0.15);
+    margin-bottom: 28px;
+}
 
-    {{ q.title }}
+.profile-name {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+}
+
+.profile-email {
+    font-size: 14px;
+    opacity: 0.85;
+    margin-top: 4px;
+    font-weight: 400;
+}
+
+/* ===== STATS ===== */
+.stats {
+    display: flex;
+    gap: 16px;
+    margin-top: 18px;
+    flex-wrap: wrap;
+}
+
+.stat-box {
+    background: rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(4px);
+    padding: 12px 20px;
+    border-radius: 12px;
+    text-align: center;
+    min-width: 110px;
+    transition: background 0.2s;
+}
+
+.stat-box:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+.stat-box strong {
+    font-size: 20px;
+    font-weight: 700;
+    display: block;
+    line-height: 1.3;
+}
+
+.stat-box span {
+    font-size: 13px;
+    opacity: 0.9;
+    font-weight: 400;
+}
+
+/* ===== TABS ===== */
+.tabs {
+    display: flex;
+    gap: 10px;
+    margin: 24px 0 20px;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 8px;
+}
+
+.tab-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px 8px 0 0;
+    cursor: pointer;
+    background: #f1f5f9;
+    font-weight: 600;
+    font-size: 14px;
+    color: #64748b;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.tab-btn:hover {
+    background: #e2e8f0;
+    color: #334155;
+}
+
+.tab-btn.active {
+    background: #4a90d9;
+    color: white;
+    box-shadow: 0 2px 8px rgba(74, 144, 217, 0.25);
+}
+
+/* ===== TAB CONTENT ===== */
+.tab-content {
+    display: none;
+    animation: fadeIn 0.3s ease;
+    width: 100%;
+    min-height: 200px;   /* prevents collapse */
+    box-sizing: border-box;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== ITEM CARD ===== */
+.item-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 14px;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    gap: 16px;
+    width: 100%;
+    box-sizing: border-box;
+    min-width: 0;
+}
+
+.item-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    border-color: #cbd5e1;
+}
+
+.item-card > div:first-child {
+    flex: 1;
+    min-width: 0;
+}
+
+/* ===== CONTENT (left side) ===== */
+.content {
+    flex: 1;
+    min-width: 0;
+}
+
+.item-title {
+    font-weight: 600;
+    font-size: 16px;
+    color: #1e293b;
+    text-decoration: none;
+    display: block;
+    line-height: 1.4;
+    transition: color 0.2s;
+}
+
+.item-title:hover {
+    color: #4a90d9;
+}
+
+.item-body {
+    color: #64748b;
+    font-size: 14px;
+    margin-top: 6px;
+    line-height: 1.5;
+    display: block;
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
+/* ===== ACTIONS (right side) ===== */
+.actions {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn {
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.edit-btn {
+    background: #f1c40f;
+    color: #1e293b;
+}
+
+.edit-btn:hover {
+    background: #e0b50e;
+    transform: scale(1.02);
+}
+
+.delete-btn {
+    background: #e74c3c;
+    color: white;
+}
+
+.delete-btn:hover {
+    background: #c0392b;
+    transform: scale(1.02);
+}
+
+/* inline form for delete */
+.actions form {
+    display: inline;
+}
+
+/* ===== EMPTY STATE ===== */
+.empty {
+    text-align: center;
+    color: #94a3b8;
+    padding: 32px 20px;
+    background: #f8fafc;
+    border-radius: 12px;
+    border: 1px dashed #cbd5e1;
+    font-size: 15px;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 640px) {
+    .profile-header-card {
+        padding: 20px;
+    }
+
+    .stats {
+        gap: 10px;
+    }
+
+    .stat-box {
+        min-width: 80px;
+        padding: 10px 14px;
+    }
+
+    .item-card {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .actions {
+        align-self: flex-end;
+    }
+
+    .tabs {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+    }
+}
+
+/* ===== UTILITY ===== */
+hr {
+    border: none;
+    border-top: 1px solid #e2e8f0;
+    margin: 24px 0;
+}
+
+/* small tag for answer */
+.answer-tag {
+    font-size: 12px;
+    color: #94a3b8;
+    background: #f1f5f9;
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+</style>
+
+<div class="profile-container">
+
+    <!-- ===== PROFILE HEADER ===== -->
+    <div class="profile-header-card">
+
+        <div class="profile-name">
+            {{ user.username }}
+        </div>
+
+        <div class="profile-email">
+            {{ user.email }}
+        </div>
+
+        <div class="stats">
+            <div class="stat-box">
+                <strong>{{ questions|length }}</strong>
+                <span>Questions</span>
+            </div>
+
+            <div class="stat-box">
+                <strong>{{ answers|length }}</strong>
+                <span>Answers</span>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ===== TABS ===== -->
+    <div class="tabs">
+        <button class="tab-btn active" onclick="showTab('questions')">
+            My Questions
+        </button>
+
+        <button class="tab-btn" onclick="showTab('answers')">
+            My Answers
+        </button>
+    </div>
+
+    <!-- ===== QUESTIONS ===== -->
+    <div id="questions" class="tab-content active">
+
+        {% for q in questions %}
+        <div class="item-card">
+
+            <div class="content">
+                <a class="item-title" href="{% url 'question_detail' q.id %}">
+                    {{ q.title }}
+                </a>
+
+                <div class="item-body">
+                    {{ q.body|truncatewords:15 }}
+                </div>
+            </div>
+
+            <div class="actions">
+
+                <a href="{% url 'edit_question' q.id %}" class="btn edit-btn">
+                    Edit
+                </a>
+
+                <form method="POST" action="{% url 'delete_question' q.id %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn delete-btn">
+                        Delete
+                    </button>
+                </form>
+
+            </div>
+
+        </div>
+
+        {% empty %}
+            <div class="empty">No questions posted.</div>
+        {% endfor %}
+
+    </div>
+
+    <!-- ===== ANSWERS ===== -->
+    <!-- ===== ANSWERS ===== -->
+    <div id="answers" class="tab-content">
+
+        {% for a in answers %}
+        <div class="item-card">
+
+            <div class="content">
+                <div class="item-body">
+                    {{ a.body|truncatewords:20 }}
+                </div>
+            </div>
+
+            <div class="actions">
+                <span class="answer-tag">Answer</span>
+            </div>
+
+        </div>
+
+        {% empty %}
+            <div class="empty">No answers posted.</div>
+        {% endfor %}
 
 </div>
 
-{% empty %}
-
-<p>No questions posted.</p>
-
-{% endfor %}
-
-<hr>
-
-<h2>My Answers</h2>
-
-{% for a in answers %}
-
-<div class="card">
-
-    {{ a.body }}
-
 </div>
 
-{% empty %}
+<!-- ===== TAB SCRIPT ===== -->
+<script>
+function showTab(tabId) {
+    // Hide all tab contents
+    document.querySelectorAll('.tab-content').forEach(el => {
+        el.classList.remove('active');
+    });
 
-<p>No answers posted.</p>
+    // Remove active from all buttons
+    document.querySelectorAll('.tab-btn').forEach(el => {
+        el.classList.remove('active');
+    });
 
-{% endfor %}
+    // Show selected tab
+    document.getElementById(tabId).classList.add('active');
+
+    // Find the button that was clicked and make it active
+    // (event.target might not be the button if clicked on child, so we use the button with onclick)
+    const buttons = document.querySelectorAll('.tab-btn');
+    buttons.forEach(btn => {
+        if (btn.getAttribute('onclick') && btn.getAttribute('onclick').includes(tabId)) {
+            btn.classList.add('active');
+        }
+    });
+}
+</script>
 
 {% endblock %}

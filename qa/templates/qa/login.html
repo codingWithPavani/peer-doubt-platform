@@ -2,28 +2,118 @@
 
 {% block content %}
 
-<h2>Login</h2>
+<style>
 
-<form method="POST">
+/* ===== CENTER PAGE ===== */
+.login-wrapper{
+    height: 90vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #f5f7fb;
+    padding: 20px;
+}
 
-    {% csrf_token %}
+/* ===== CARD ===== */
+.login-card{
+    width: 100%;
+    max-width: 420px;
+    background: #ffffff;
+    padding: 35px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
 
-    <input type="text"
-           name="username"
-           placeholder="Username">
+/* TITLE */
+.login-title{
+    text-align: center;
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 25px;
+    color: #1a1a2e;
+}
 
-    <br><br>
+/* INPUTS */
+.login-card input{
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    border: 1px solid #e0e6ed;
+    background: #fafbfc;
+    font-size: 14px;
+    transition: 0.2s;
+}
 
-    <input type="password"
-           name="password"
-           placeholder="Password">
+.login-card input:focus{
+    outline: none;
+    border-color: #4a90d9;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(74,144,217,0.12);
+}
 
-    <br><br>
+/* BUTTON */
+.login-btn{
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(135deg,#4a90d9,#357abd);
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
 
-    <button type="submit">
-        Login
-    </button>
+.login-btn:hover{
+    transform: translateY(-2px);
+}
 
-</form>
+/* SMALL TEXT */
+.footer-text{
+    text-align: center;
+    margin-top: 15px;
+    font-size: 13px;
+    color: #666;
+}
+
+</style>
+
+<div class="login-wrapper">
+
+    <div class="login-card">
+
+        <div class="login-title">
+            Welcome Back 
+        </div>
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+            <input type="text"
+                   name="username"
+                   placeholder="Username"
+                   required>
+
+            <input type="password"
+                   name="password"
+                   placeholder="Password"
+                   required>
+
+            <button type="submit" class="login-btn">
+                Login
+            </button>
+
+        </form>
+
+        <div class="footer-text">
+            Don’t have an account?<a href="{% url 'register' %}">Sign up</a>
+        </div>
+
+    </div>
+
+</div>
 
 {% endblock %}
