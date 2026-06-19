@@ -24,7 +24,7 @@ urlpatterns = [
     ),
 
     path(
-        'profile/',
+        'profile/<int:user_id>/',
         views.profile,
         name='profile'
     ),
@@ -34,6 +34,12 @@ urlpatterns = [
     path('logout/', views.user_logout, name='logout'),
     path('question/edit/<int:pk>/', views.edit_question, name='edit_question'),
     path('question/delete/<int:pk>/', views.delete_question, name='delete_question'),
+
+    path(
+    'user/<int:user_id>/',
+    views.user_profile,
+    name='user_profile'
+)
 ]
 
 

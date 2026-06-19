@@ -4,6 +4,8 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import login
 from django.contrib.auth import logout
 from django.contrib.auth.models import User
+from django.db.models import Q
+
 from django.shortcuts import (
     render,
     redirect,
@@ -23,20 +25,50 @@ from .forms import (
 from django.contrib.auth.decorators import login_required
 
 
+# def home(request):
+
+#     questions = Question.objects.all().order_by(
+#         '-created_at'
+#     )
+
+#     return render(
+#         request,
+#         'qa/home.html',
+#         {
+#             'questions': questions
+#         }
+#     )
+
+
 def home(request):
 
-    questions = Question.objects.all().order_by(
-        '-created_at'
-    )
+    query = request.GET.get('q')
+
+    if query:
+
+        # questions = Question.objects.filter(
+        #     title__icontains=query
+        # ).order_by('-created_at')
+        questions = Question.objects.filter(
+        Q(title__icontains=query) |
+        Q(body__icontains=query) |
+        Q(tags__icontains=query)
+    ).order_by('-created_at')
+
+    else:
+
+        questions = Question.objects.all().order_by(
+            '-created_at'
+        )
 
     return render(
         request,
         'qa/home.html',
         {
-            'questions': questions
+            'questions': questions,
+            'query': query
         }
     )
-
 
 @login_required
 def ask_question(request):
@@ -127,32 +159,57 @@ def question_detail(
     )
 
 
-@login_required
-def profile(request):
+# @login_required
+# def profile(request):
+
+#     questions = Question.objects.filter(
+#         author=request.user
+#     ).exclude(id__isnull=True)
+
+#     answers = Answer.objects.filter(
+#         author=request.user
+#     )
+
+#     return render(
+#         request,
+#         'qa/profile.html',
+#         {
+#             'questions': questions,
+#             'answers': answers
+#         }
+#     )
+
+from django.contrib.auth.models import User
+
+def profile(request, user_id):
+
+    user = get_object_or_404(
+        User,
+        id=user_id
+    )
 
     questions = Question.objects.filter(
-        author=request.user
-    ).exclude(id__isnull=True)
+        author=user
+    )
 
     answers = Answer.objects.filter(
-        author=request.user
+        author=user
     )
 
     return render(
         request,
         'qa/profile.html',
         {
+            'profile_user': user,
             'questions': questions,
             'answers': answers
         }
     )
 
-
 from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.shortcuts import redirect, render
 from django.contrib import messages
-
 
 def register(request):
     if request.method == "POST":
@@ -238,3 +295,27 @@ def delete_question(request, pk):
         return redirect('profile')
 
     return render(request, 'qa/confirm_delete.html', {'question': question})
+
+
+
+from django.contrib.auth.models import User
+
+def user_profile(request, user_id):
+
+    user = get_object_or_404(
+        User,
+        id=user_id
+    )
+
+    questions = Question.objects.filter(author=user)
+    answers = Answer.objects.filter(author=user)
+
+    return render(
+        request,
+        'qa/profile.html',
+        {
+            'profile_user': user,
+            'questions': questions,
+            'answers': answers
+        }
+    )

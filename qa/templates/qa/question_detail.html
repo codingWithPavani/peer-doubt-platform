@@ -176,6 +176,7 @@ body{
     font-weight:600;
 }
 
+
 .submit-btn:hover{
     transform:translateY(-1px);
 }
@@ -221,7 +222,9 @@ body{
             </div>
 
             <div class="answer-author">
-                Answered by {{ answer.author.username }}
+                Answered by <a href="{% url 'profile' answer.author.id %}">
+                                {{ answer.author.username }}
+                            </a>
             </div>
 
         </div>
@@ -253,7 +256,10 @@ body{
         </div>
 
         <div class="question-meta">
-            Asked by <strong>{{ question.author.username }}</strong>
+            Asked by
+                <a href="{% url 'profile' question.author.id %}">
+                    {{ question.author.username }}
+                </a>
         </div>
 
         <div class="answer-form">

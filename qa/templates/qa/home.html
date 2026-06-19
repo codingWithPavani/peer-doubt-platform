@@ -3,6 +3,42 @@
 {% block content %}
 <style>
 
+.search-container{
+    margin-bottom:25px;
+}
+
+.search-container form{
+    display:flex;
+    gap:10px;
+}
+
+.search-input{
+    flex:1;
+    padding:12px 15px;
+    border:2px solid #e8ecf1;
+    border-radius:10px;
+    font-size:15px;
+}
+
+.search-input:focus{
+    outline:none;
+    border-color:#4a90d9;
+}
+
+.search-btn{
+    background:#4a90d9;
+    color:white;
+    border:none;
+    padding:12px 20px;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:600;
+}
+
+.search-btn:hover{
+    background:#357abd;
+}
+
 .questions-header{
     margin-bottom:30px;
 }
@@ -91,13 +127,49 @@
     background:white;
     border-radius:12px;
 }
+.author-link{
+    text-decoration: none;
+    color: #2c3e50;
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+
+.author-link:hover{
+    color: #4a90d9;
+}
 
 </style>
+<div class="search-container">
+
+    <form method="GET">
+
+        <input
+            type="text"
+            name="q"
+            placeholder="Search questions..."
+            value="{{ query|default:'' }}"
+            class="search-input"
+        >
+
+        <button type="submit" class="search-btn">
+            Search
+        </button>
+
+    </form>
+
+</div>
 
 <div class="questions-header">
     <h1>All Questions</h1>
     <p class="subtitle">Browse and solve doubts from your peers</p>
 </div>
+
+{% if query %}
+<div class="search-result-info">
+    Found {{ questions|length }} result{{ questions|length|pluralize }}
+    for "<strong>{{ query }}</strong>"
+</div>
+{% endif %}
 
 {% for q in questions %}
 
@@ -131,7 +203,9 @@
 
             <span class="author">
                 Asked by
-                <strong>{{ q.author.username }}</strong>
+                <a href="{% url 'user_profile' q.author.id %}" class="author-link">
+                    {{ q.author.username }}
+                </a>
             </span>
 
         </div>
