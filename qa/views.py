@@ -181,6 +181,7 @@ def question_detail(
 
 from django.contrib.auth.models import User
 
+@login_required
 def profile(request, user_id):
 
     user = get_object_or_404(
@@ -292,14 +293,71 @@ def delete_question(request, pk):
 
     if request.method == "POST":
         question.delete()
-        return redirect('profile')
+        return redirect(
+            'profile',
+            user_id=request.user.id
+        )
 
     return render(request, 'qa/confirm_delete.html', {'question': question})
 
 
 
+@login_required
+def edit_answer(request, answer_id):
+
+    answer = get_object_or_404(
+        Answer,
+        id=answer_id,
+        author=request.user
+    )
+
+    if request.method == 'POST':
+
+        form = AnswerForm(
+            request.POST,
+            instance=answer
+        )
+
+        if form.is_valid():
+            form.save()
+            return redirect(
+                'profile',
+                user_id=request.user.id
+            )
+
+    else:
+        form = AnswerForm(instance=answer)
+
+    return render(
+        request,
+        'qa/edit_answer.html',
+        {'form': form}
+    )
+
+
+@login_required
+def delete_answer(request, answer_id):
+
+    answer = get_object_or_404(
+        Answer,
+        id=answer_id,
+        author=request.user
+    )
+
+    if request.method == 'POST':
+        answer.delete()
+
+    return redirect(
+        'profile',
+        user_id=request.user.id
+    )
+
+
+
+
 from django.contrib.auth.models import User
 
+@login_required
 def user_profile(request, user_id):
 
     user = get_object_or_404(

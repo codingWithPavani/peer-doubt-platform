@@ -36,10 +36,24 @@ urlpatterns = [
     path('question/delete/<int:pk>/', views.delete_question, name='delete_question'),
 
     path(
-    'user/<int:user_id>/',
-    views.user_profile,
-    name='user_profile'
-)
+       'user/<int:user_id>/',
+        views.user_profile,
+        name='user_profile'
+    ),
+
+    path(
+        'answer/edit/<int:answer_id>/',
+        views.edit_answer,
+        name='edit_answer'
+    ),
+
+    path(
+        'answer/delete/<int:answer_id>/',
+        views.delete_answer,
+        name='delete_answer'
+    ),
+
+
 ]
 
 

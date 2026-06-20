@@ -2,147 +2,257 @@
 
 {% block content %}
 <style>
+* {
+    box-sizing: border-box;
+}
 
 .search-container{
-    margin-bottom:25px;
+    margin-bottom:30px;
 }
 
 .search-container form{
     display:flex;
-    gap:10px;
+    gap:12px;
+    max-width:600px;
 }
 
 .search-input{
     flex:1;
-    padding:12px 15px;
-    border:2px solid #e8ecf1;
-    border-radius:10px;
+    padding:14px 18px;
+    border:2px solid #e2e8f0;
+    border-radius:12px;
     font-size:15px;
+    background:#f8fafc;
+    transition:all 0.2s ease;
+    box-shadow:0 1px 3px rgba(0,0,0,0.04);
 }
 
 .search-input:focus{
     outline:none;
-    border-color:#4a90d9;
+    border-color:#3b82f6;
+    background:#ffffff;
+    box-shadow:0 0 0 3px rgba(59,130,246,0.1);
 }
 
 .search-btn{
-    background:#4a90d9;
+    background:#3b82f6;
     color:white;
     border:none;
-    padding:12px 20px;
-    border-radius:10px;
+    padding:14px 28px;
+    border-radius:12px;
     cursor:pointer;
     font-weight:600;
+    font-size:14px;
+    transition:all 0.2s ease;
+    letter-spacing:0.3px;
 }
 
 .search-btn:hover{
-    background:#357abd;
+    background:#2563eb;
+    transform:translateY(-1px);
+    box-shadow:0 4px 12px rgba(59,130,246,0.3);
+}
+
+.search-btn:active{
+    transform:translateY(0);
 }
 
 .questions-header{
-    margin-bottom:30px;
+    margin-bottom:32px;
+    border-bottom:1px solid #e2e8f0;
+    padding-bottom:16px;
+}
+
+.questions-header h1{
+    font-size:28px;
+    font-weight:700;
+    color:#0f172a;
+    margin:0 0 6px 0;
 }
 
 .subtitle{
-    color:#666;
+    color:#64748b;
+    font-size:15px;
+    margin:0;
+}
+
+.search-result-info{
+    background:#f0f9ff;
+    border:1px solid #bae6fd;
+    border-radius:10px;
+    padding:12px 18px;
+    margin-bottom:24px;
+    color:#0369a1;
+    font-size:14px;
 }
 
 .question-card{
     background:white;
-    border-radius:12px;
-    padding:20px;
+    border-radius:16px;
+    padding:24px;
     margin-bottom:20px;
     display:flex;
-    gap:20px;
-    box-shadow:0 2px 10px rgba(0,0,0,0.08);
-    transition:0.3s;
+    gap:24px;
+    box-shadow:0 1px 4px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    transition:all 0.25s ease;
+    border:1px solid #f1f5f9;
 }
 
 .question-card:hover{
-    transform:translateY(-3px);
+    transform:translateY(-2px);
+    box-shadow:0 8px 25px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.04);
+    border-color:#e2e8f0;
 }
 
 .question-stats{
-    min-width:90px;
+    min-width:80px;
     text-align:center;
 }
 
 .stat{
-    background:#f5f7fa;
-    padding:12px;
-    border-radius:10px;
+    background:#f8fafc;
+    padding:16px 12px;
+    border-radius:12px;
+    border:1px solid #e2e8f0;
 }
 
 .stat strong{
     display:block;
-    font-size:22px;
-    color:#2c3e50;
+    font-size:24px;
+    color:#0f172a;
+    font-weight:700;
+    line-height:1.2;
 }
 
 .stat span{
-    color:#666;
-    font-size:14px;
+    color:#64748b;
+    font-size:13px;
+    font-weight:500;
+    display:block;
+    margin-top:2px;
 }
 
 .question-content{
     flex:1;
+    min-width:0;
 }
 
 .question-title{
     text-decoration:none;
-    color:#2c3e50;
+    color:#0f172a;
+    font-size:18px;
+    font-weight:600;
+    transition:color 0.2s ease;
+    display:inline-block;
 }
 
 .question-title:hover{
-    color:#3498db;
+    color:#3b82f6;
 }
 
 .question-preview{
-    margin:10px 0;
-    color:#555;
+    margin:10px 0 0 0;
+    color:#475569;
+    line-height:1.6;
+    font-size:14px;
 }
 
 .question-footer{
     display:flex;
     justify-content:space-between;
     align-items:center;
-    margin-top:15px;
+    margin-top:16px;
+    flex-wrap:wrap;
+    gap:8px;
 }
 
 .tags{
-    background:#e3f2fd;
-    color:#1976d2;
-    padding:5px 10px;
+    background:#eff6ff;
+    color:#2563eb;
+    padding:6px 14px;
     border-radius:20px;
     font-size:13px;
+    font-weight:500;
+    display:inline-block;
 }
 
 .author{
-    color:#666;
+    color:#64748b;
+    font-size:14px;
 }
 
-.empty-state{
-    text-align:center;
-    padding:50px;
-    background:white;
-    border-radius:12px;
-}
 .author-link{
     text-decoration: none;
-    color: #2c3e50;
+    color:#1e293b;
     font-weight: 600;
     transition: color 0.2s ease;
 }
 
 .author-link:hover{
-    color: #4a90d9;
+    color: #3b82f6;
 }
 
+.empty-state{
+    text-align:center;
+    padding:60px 40px;
+    background:white;
+    border-radius:16px;
+    border:1px solid #e2e8f0;
+    box-shadow:0 1px 4px rgba(0,0,0,0.04);
+}
+
+.empty-state h3{
+    font-size:22px;
+    color:#0f172a;
+    margin:0 0 8px 0;
+}
+
+.empty-state p{
+    color:#64748b;
+    margin:0;
+    font-size:15px;
+}
+
+@media (max-width: 640px) {
+    .question-card{
+        flex-direction:column;
+        gap:16px;
+        padding:20px;
+    }
+    
+    .question-stats{
+        min-width:auto;
+        display:flex;
+        justify-content:flex-start;
+    }
+    
+    .stat{
+        display:inline-flex;
+        align-items:center;
+        gap:8px;
+        padding:10px 16px;
+    }
+    
+    .stat strong{
+        font-size:18px;
+    }
+    
+    .stat span{
+        font-size:13px;
+    }
+    
+    .search-container form{
+        flex-direction:column;
+    }
+    
+    .questions-header h1{
+        font-size:24px;
+    }
+}
 </style>
+
 <div class="search-container">
-
     <form method="GET">
-
         <input
             type="text"
             name="q"
@@ -150,13 +260,10 @@
             value="{{ query|default:'' }}"
             class="search-input"
         >
-
         <button type="submit" class="search-btn">
             Search
         </button>
-
     </form>
-
 </div>
 
 <div class="questions-header">
@@ -172,9 +279,7 @@
 {% endif %}
 
 {% for q in questions %}
-
 <div class="question-card">
-
     <div class="question-stats">
         <div class="stat">
             <strong>{{ q.answers.count }}</strong>
@@ -183,8 +288,7 @@
     </div>
 
     <div class="question-content">
-
-        <h3>
+        <h3 style="margin:0;">
             <a href="{% url 'question_detail' q.id %}"
                class="question-title">
                 {{ q.title }}
@@ -196,7 +300,6 @@
         </p>
 
         <div class="question-footer">
-
             <span class="tags">
                 {{ q.tags }}
             </span>
@@ -207,20 +310,14 @@
                     {{ q.author.username }}
                 </a>
             </span>
-
         </div>
-
     </div>
-
 </div>
-
 {% empty %}
-
 <div class="empty-state">
     <h3>No Questions Yet</h3>
     <p>Be the first student to ask a doubt.</p>
 </div>
-
 {% endfor %}
 
 {% endblock %}

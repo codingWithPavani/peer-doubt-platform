@@ -1,0 +1,184 @@
+{% extends 'qa/base.html' %}
+
+{% block content %}
+
+<style>
+
+.edit-container{
+    max-width:850px;
+    margin:30px auto;
+    padding:0 20px;
+}
+
+.edit-card{
+    background:#ffffff;
+    border-radius:18px;
+    padding:35px;
+    box-shadow:0 4px 20px rgba(0,0,0,0.08);
+    border:1px solid #eef2f7;
+}
+
+.edit-header{
+    margin-bottom:30px;
+    padding-bottom:20px;
+    border-bottom:2px solid #f1f4f8;
+}
+
+.edit-title{
+    font-size:32px;
+    color:#1a1a2e;
+    margin-bottom:8px;
+    font-weight:700;
+}
+
+.edit-subtitle{
+    color:#6c757d;
+    font-size:15px;
+}
+
+.form-group{
+    margin-bottom:25px;
+}
+
+form p{
+    margin-bottom:20px;
+}
+
+form label{
+    display:block;
+    margin-bottom:8px;
+    font-weight:600;
+    color:#2c3e50;
+    font-size:15px;
+}
+
+form input,
+form textarea,
+form select{
+    width:100%;
+    padding:14px;
+    border:2px solid #e8ecf1;
+    border-radius:10px;
+    font-size:15px;
+    background:#fafbfc;
+    transition:all 0.3s ease;
+    box-sizing:border-box;
+}
+
+form textarea{
+    min-height:180px;
+    resize:vertical;
+    line-height:1.7;
+}
+
+form input:focus,
+form textarea:focus,
+form select:focus{
+    outline:none;
+    border-color:#4a90d9;
+    background:white;
+    box-shadow:0 0 0 4px rgba(74,144,217,0.12);
+}
+
+.button-group{
+    display:flex;
+    gap:15px;
+    margin-top:25px;
+}
+
+.save-btn{
+    background:linear-gradient(135deg,#4a90d9,#357abd);
+    color:white;
+    border:none;
+    padding:12px 25px;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:15px;
+    font-weight:600;
+    transition:0.3s;
+}
+
+.save-btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 6px 15px rgba(74,144,217,0.3);
+}
+
+.cancel-btn{
+    text-decoration:none;
+    background:#f5f7fa;
+    color:#2c3e50;
+    padding:12px 25px;
+    border-radius:10px;
+    font-weight:600;
+    transition:0.3s;
+}
+
+.cancel-btn:hover{
+    background:#e9ecef;
+}
+
+@media(max-width:768px){
+
+    .edit-card{
+        padding:25px;
+    }
+
+    .edit-title{
+        font-size:26px;
+    }
+
+    .button-group{
+        flex-direction:column;
+    }
+
+    .save-btn,
+    .cancel-btn{
+        width:100%;
+        text-align:center;
+    }
+}
+
+</style>
+
+<div class="edit-container">
+
+    <div class="edit-card">
+
+        <div class="edit-header">
+
+            <h1 class="edit-title">
+                Edit Answer
+            </h1>
+
+            <p class="edit-subtitle">
+                Update your answer and save the changes.
+            </p>
+
+        </div>
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+            {{ form.as_p }}
+
+            <div class="button-group">
+
+                <button type="submit" class="save-btn">
+                    Save Changes
+                </button>
+
+                <a href="{% url 'profile' request.user.id %}"
+                   class="cancel-btn">
+                    Cancel
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}
