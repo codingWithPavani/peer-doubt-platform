@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,8 +21,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-k#tf-b$7^91w4beo!6s#)l2y^40*%i)&9270fd^9)2q0y6q$0#'
-
+# SECRET_KEY = 'django-insecure-k#tf-b$7^91w4beo!6s#)l2y^40*%i)&9270fd^9)2q0y6q$0#'
+SECRET_KEY = os.environ.get('django-insecure-k#tf-b$7^91w4beo!6s#)l2y^40*%i)&9270fd^9)2q0y6q$0#')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -84,24 +85,16 @@ WSGI_APPLICATION = 'peer_doubt_board.wsgi.application'
 
 import os
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'peer_doubt_db',
-#         'USER': 'postgres',
-#         'PASSWORD': 'postgres123',
-#         'HOST': 'localhost',
-#         'PORT': '5432',
-#     }
-# }
+import os
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('peer_doubt_db'),
-        'USER': os.environ.get('peer_doubt_db_user'),
-        'PASSWORD': os.environ.get('QUDcKFxIVIAv5ntLbRVi8GdzoDiBzoov'),
-        'HOST': os.environ.get('dpg-d8tbnkpo3t8c73dhhjf0-a'),
-        'PORT': os.environ.get('5432'),
+        'NAME': os.environ.get('DB_NAME'),
+        'USER': os.environ.get('DB_USER'),
+        'PASSWORD': os.environ.get('DB_PASSWORD'),
+        'HOST': os.environ.get('DB_HOST'),
+        'PORT': os.environ.get('DB_PORT'),
     }
 }
 # Password validation
