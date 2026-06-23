@@ -25,8 +25,15 @@ SECRET_KEY = 'django-insecure-k#tf-b$7^91w4beo!6s#)l2y^40*%i)&9270fd^9)2q0y6q$0#
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    '.onrender.com',
+    '127.0.0.1',
+    'localhost',
+]
 
+STATIC_URL = 'static/'
+
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Application definition
 
@@ -42,6 +49,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -74,18 +82,28 @@ WSGI_APPLICATION = 'peer_doubt_board.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 
+import os
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'peer_doubt_db',
+#         'USER': 'postgres',
+#         'PASSWORD': 'postgres123',
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#     }
+# }
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'peer_doubt_db',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres123',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'NAME': os.environ.get('peer_doubt_db'),
+        'USER': os.environ.get('peer_doubt_db_user'),
+        'PASSWORD': os.environ.get('QUDcKFxIVIAv5ntLbRVi8GdzoDiBzoov'),
+        'HOST': os.environ.get('dpg-d8tbnkpo3t8c73dhhjf0-a'),
+        'PORT': os.environ.get('5432'),
     }
 }
-
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 

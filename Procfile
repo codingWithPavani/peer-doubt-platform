@@ -1,0 +1,1 @@
+web: gunicorn peer_doubt_board.wsgi:application
