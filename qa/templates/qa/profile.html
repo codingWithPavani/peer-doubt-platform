@@ -1,633 +1,722 @@
 {% extends 'qa/base.html' %}
 
 {% block content %}
-
 <style>
-
-body{
-    background:#f3f6f8;
+    /* ===== Global Reset & Base ===== */
+    *, *::before, *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+   html, body {
+    /* height: 100%; */
+    overflow: hidden;
 }
-
-/* ===== CONTAINER ===== */
-
-.profile-container{
-    max-width:1000px;
-    margin:30px auto;
-    padding:0 20px;
-}
-
-/* ===== COVER ===== */
-
-.profile-cover{
-    height:220px;
-    background:linear-gradient(135deg,#4a90d9,#357abd);
-    border-radius:18px 18px 0 0;
-}
-
-/* ===== PROFILE CARD ===== */
-
-.profile-card{
-    background:white;
-    margin:-70px 30px 0;
-    border-radius:18px;
-    padding:25px;
-    box-shadow:0 4px 20px rgba(0,0,0,0.08);
-
-    display:flex;
-    align-items:center;
-    gap:25px;
-}
-
-/* ===== AVATAR ===== */
-
-.avatar{
-    width:110px;
-    height:110px;
-    border-radius:50%;
-    background:#4a90d9;
-    color:white;
-
-    display:flex;
-    justify-content:center;
-    align-items:center;
-
-    font-size:42px;
-    font-weight:700;
-
-    border:5px solid white;
-}
-
-/* ===== PROFILE INFO ===== */
-
-.profile-info h2{
-    color:#1e293b;
-    margin-bottom:5px;
-}
-
-.profile-info p{
-    color:#64748b;
-    margin-bottom:15px;
-}
-
-/* ===== STATS ===== */
-
-.stats{
-    display:flex;
-    gap:20px;
-}
-
-.stat-card{
-    background:#f8fafc;
-    padding:12px 20px;
-    border-radius:12px;
-    text-align:center;
-}
-
-.stat-card strong{
-    display:block;
-    font-size:22px;
-    color:#1e293b;
-}
-
-.stat-card span{
-    font-size:13px;
-    color:#64748b;
-}
-
-/* ===== SECTION ===== */
-
-.section{
-    margin-top:30px;
-}
-
-.section-title{
-    font-size:22px;
-    color:#1e293b;
-    margin-bottom:15px;
-}
-
-/* ===== CARDS ===== */
-
-.post-card{
-    background:white;
-    padding:20px;
-    border-radius:14px;
-    margin-bottom:15px;
-    box-shadow:0 2px 10px rgba(0,0,0,0.05);
-
-    display:flex;
-    justify-content:space-between;
-    gap:20px;
-}
-
-.post-content{
-    flex:1;
-}
-
-.post-title{
-    font-size:17px;
-    font-weight:600;
-    color:#1e293b;
-    text-decoration:none;
-}
-
-.post-title:hover{
-    color:#4a90d9;
-}
-
-.post-body{
-    margin-top:8px;
-    color:#64748b;
-    line-height:1.6;
-}
-
-/* ===== ACTIONS ===== */
-
-.actions{
-    display:flex;
-    gap:10px;
-    align-items:flex-start;
-}
-
-.btn{
-    padding:8px 14px;
-    border-radius:8px;
-    text-decoration:none;
-    border:none;
-    cursor:pointer;
-    font-size:13px;
-    font-weight:600;
-}
-
-.edit-btn{
-    background:#f1c40f;
-    color:#1e293b;
-}
-
-.delete-btn{
-    background:#e74c3c;
-    color:white;
-}
-
-.answer-badge{
-    background:#eef6ff;
-    color:#357abd;
-    padding:6px 12px;
-    border-radius:20px;
-    font-size:12px;
-    font-weight:600;
-}
-
-/* ===== EMPTY ===== */
-
-.empty{
-    background:white;
-    padding:25px;
-    border-radius:12px;
-    text-align:center;
-    color:#94a3b8;
-}
-
-/* ===== MOBILE ===== */
-
-@media(max-width:768px){
-
-    .profile-card{
-        flex-direction:column;
-        text-align:center;
-        margin:-60px 15px 0;
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background: #f8fafc;
+        color: #1e293b;
+        line-height: 1.6;
+        
     }
 
-    .stats{
-        justify-content:center;
-        flex-wrap:wrap;
+    .container {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 0 24px;
     }
 
-    .post-card{
-        flex-direction:column;
+    /* ===== Profile Layout: 3-column grid ===== */
+    .profile-container {
+        display: grid;
+        grid-template-columns: 280px 1fr 1fr;
+        gap: 32px;
+        padding: 40px 0;
     }
 
-    .actions{
-        justify-content:flex-end;
+    /* ===== Left Column – Sticky Profile Card ===== */
+    .left-column {
+        position: sticky;
+        top: 24px;
+        height: fit-content;
     }
-}
 
-/* Modal overlay */
-.modal {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(15, 23, 42, 0.5);
-    backdrop-filter: blur(4px);
-    z-index: 9999;
-    justify-content: center;
-    align-items: center;
-    animation: fadeIn 0.2s ease;
-}
-
-.modal.active {
-    display: flex;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-/* Modal content card */
-.modal-content {
-    background: #ffffff;
-    padding: 32px 30px 28px;
-    border-radius: 16px;
-    width: 420px;
-    max-width: 90%;
-    text-align: center;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-    animation: slideUp 0.25s ease;
-}
-
-@keyframes slideUp {
-    from {
-        opacity: 0;
-        transform: translateY(12px) scale(0.97);
+    .profile-card {
+        background: #ffffff;
+        border-radius: 20px;
+        padding: 32px 24px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+        text-align: center;
+        transition: box-shadow 0.3s ease;
     }
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
+
+    .profile-card:hover {
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
     }
-}
 
-.modal-content h3 {
-    margin: 0 0 12px 0;
-    font-size: 20px;
-    font-weight: 700;
-    color: #0f172a;
-}
+    .avatar {
+        width: 96px;
+        height: 96px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        color: #ffffff;
+        font-size: 36px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+        box-shadow: 0 8px 24px rgba(99, 102, 241, 0.25);
+    }
 
-.modal-content p {
-    color: #64748b;
-    font-size: 15px;
-    line-height: 1.6;
-    margin: 0 0 28px 0;
-}
+    .profile-info h2 {
+        font-size: 22px;
+        font-weight: 700;
+        color: #0f172a;
+        letter-spacing: -0.01em;
+    }
 
-/* Modal action buttons */
-.modal-actions {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    flex-wrap: wrap;
-}
+    .profile-info p {
+        font-size: 14px;
+        color: #64748b;
+        margin: 4px 0 20px;
+    }
 
-.cancel-btn {
-    background: #f1f5f9;
-    color: #475569;
-    border: 1px solid #e2e8f0;
-    padding: 10px 24px;
-    border-radius: 10px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
+    /* .stats {
+        display: flex;
+        justify-content: center;
+        gap: 32px;
+        border-top: 1px solid #e2e8f0;
+        padding-top: 20px;
+    } */
 
-.cancel-btn:hover {
-    background: #e2e8f0;
-    border-color: #cbd5e1;
-}
+    .stats {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+        border-top: 1px solid #e2e8f0;
+        padding-top: 20px;
+        margin-top: 10px;
+    }
 
-.cancel-btn:focus-visible {
-    outline: 2px solid #3b82f6;
-    outline-offset: 2px;
-}
+    .stat-card strong {
+        display: block;
+        font-size: 24px;
+        font-weight: 700;
+        color: #0f172a;
+        line-height: 1.2;
+    }
 
-.confirm-btn {
-    background: #ef4444;
-    color: white;
-    border: none;
-    padding: 10px 24px;
-    border-radius: 10px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
+    .stat-card span {
+        font-size: 12px;
+        font-weight: 500;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+    }
 
-.confirm-btn:hover {
-    background: #dc2626;
-    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
-    transform: translateY(-1px);
-}
+    /* ===== Right Columns – Shared ===== */
+    .middle-column, .right-column {
+        min-width: 0;
+    }
 
-.confirm-btn:active {
-    transform: translateY(0);
-}
+    .section-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: #0f172a;
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid #e2e8f0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
 
-.confirm-btn:focus-visible {
-    outline: 2px solid #7f1d1d;
-    outline-offset: 2px;
-}
+    .section-title::after {
+        content: '';
+        flex: 1;
+        height: 2px;
+        background: #e2e8f0;
+    }
 
-/* Creation Date */
-.post-date{
-    margin-top:8px;
-    color:#64748b;
-    font-size:13px;
-}
-.actions{
-    display:flex;
-    flex-direction:column;
-    align-items:flex-end;
-    gap:8px;
-    min-width:180px;
-}
+    /* ===== Post Cards ===== */
+    .post-card {
+        background: #ffffff;
+        border-radius: 16px;
+        padding: 20px 24px;
+        margin-bottom: 16px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        border-left: 4px solid #6366f1;
+        transition: all 0.2s ease;
+    }
 
-.action-buttons{
-    display:flex;
-    gap:8px;
-}
+    .post-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06), 0 2px 4px rgba(0, 0, 0, 0.02);
+    }
 
-.question-date{
-    font-size:12px;
-    color:#64748b;
-    font-weight:500;
-}
-/* Responsive */
-@media (max-width: 480px) {
-    .modal-content {
-        padding: 24px 20px;
-        width: 95%;
+    .post-title {
+        font-size: 17px;
+        font-weight: 600;
+        color: #0f172a;
+        text-decoration: none;
+        display: block;
+        margin-bottom: 6px;
+        line-height: 1.4;
+    }
+
+    .post-title:hover {
+        color: #6366f1;
+    }
+
+    .post-body {
+        color: #475569;
+        font-size: 14px;
+        margin-bottom: 14px;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .post-meta {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-top: 14px;
+        border-top: 1px solid #f1f5f9;
+        font-size: 13px;
+        color: #94a3b8;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 8px;
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 6px 14px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        text-decoration: none;
+        border: 1px solid transparent;
+        cursor: pointer;
+        transition: all 0.2s;
+        background: transparent;
+    }
+
+    .edit-btn {
+        background: #eef2ff;
+        color: #6366f1;
+        border-color: #6366f1;
+    }
+
+    .edit-btn:hover {
+        background: #6366f1;
+        color: #ffffff;
+    }
+
+    .delete-btn {
+        background: #fef2f2;
+        color: #ef4444;
+        border-color: #ef4444;
+    }
+
+    .delete-btn:hover {
+        background: #ef4444;
+        color: #ffffff;
+    }
+
+    .empty-state {
+        background: #ffffff;
+        border-radius: 16px;
+        padding: 48px 24px;
+        text-align: center;
+        color: #94a3b8;
+        font-size: 15px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+
+    .empty-state p {
+        margin-top: 8px;
+    }
+
+    /* ===== Modal ===== */
+    .modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.5);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+    }
+
+    .modal.active {
+        display: flex;
+    }
+
+    #deleteModal .modal-content {
+        background: #ffffff;
+        padding: 32px;
+        border-radius: 20px;
+        width: 100%;
+        max-width: 420px;
+        text-align: center;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+
+    .modal-content h3 {
+        font-size: 20px;
+        font-weight: 600;
+        color: #0f172a;
+        margin-bottom: 8px;
+    }
+
+    .modal-content p {
+        color: #64748b;
+        margin-bottom: 24px;
     }
 
     .modal-actions {
-        flex-direction: column-reverse;
+        display: flex;
+        gap: 12px;
+        justify-content: center;
     }
 
-    .cancel-btn,
-    .confirm-btn {
-        width: 100%;
-        text-align: center;
+    .modal-actions button {
+        padding: 10px 24px;
+        border: none;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
     }
+
+    .modal-actions .cancel-btn {
+        background: #f1f5f9;
+        color: #475569;
+    }
+
+    .modal-actions .cancel-btn:hover {
+        background: #e2e8f0;
+    }
+
+    .modal-actions .confirm-delete-btn {
+        background: #ef4444;
+        color: #ffffff;
+    }
+
+    .modal-actions .confirm-delete-btn:hover {
+        background: #dc2626;
+    }
+    
+    .scroll-box {
+        max-height: 75vh;   /* controls height */
+        overflow-y: auto;
+        padding-right: 8px;
+    }
+
+    /* optional nicer scrollbar */
+    .scroll-box::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .scroll-box::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 10px;
+    }
+
+    .scroll-box::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+    }
+
+    /*  follow section */
+    .follow-section {
+        margin: 16px 0 10px;
+        display: flex;
+        justify-content: center;
+    }
+    
+    /* followers popup */
+    /* Overlay */
+#followersModal.modal {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
 }
 
+/* Popup box */
+/* #followersModal .modal-content {
+    max-width: 480px;
+    max-height: 70vh;
+    padding: 28px 24px;
+    border-radius: 24px;
+    background: #ffffff;
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+    overflow-y: auto;
+} */
+
+
+/* ===== Followers Modal Specific Styles ===== */
+/* ===== Followers Modal – Refined ===== */
+/* ===== Followers Modal Overlay ===== */
+#followersModal.modal {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+/* ===== Followers Card (ONLY THIS RULE) ===== */
+#followersModal .followers-modal-card {
+    width: 460px;
+    max-height: 75vh;
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    animation: pop 0.2s ease;
+}
+
+/* animation */
+@keyframes pop {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+/* header */
+#followersModal h3 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 14px;
+}
+
+/* scroll area */
+#followersBody {
+    overflow-y: auto;
+    flex: 1;
+    padding: 10px;
+}
+
+/* follower item */
+.follower-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 12px;
+    border-radius: 12px;
+    transition: 0.2s;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.follower-item:hover {
+    background: #f8fafc;
+}
+
+/* left side */
+.follower-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* avatar */
+.follower-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+}
+
+/* name */
+.follower-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: #0f172a;
+    text-decoration: none;
+}
+
+.follower-name:hover {
+    color: #6366f1;
+}
+
+/* username */
+.follower-username {
+    font-size: 13px;
+    color: #94a3b8;
+}
+
+/* button */
+.view-btn {
+    padding: 6px 12px;
+    background: #6366f1;
+    color: white;
+    border-radius: 8px;
+    font-size: 13px;
+    text-decoration: none;
+}
+
+.view-btn:hover {
+    background: #4f46e5;
+}
+
+/* empty state */
+.empty-followers {
+    text-align: center;
+    padding: 40px;
+    color: #94a3b8;
+}
+
+    /* ===== Responsive ===== */
+    @media (max-width: 1024px) {
+        .profile-container {
+            grid-template-columns: 240px 1fr;
+        }
+        .right-column {
+            grid-column: 1 / -1;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .profile-container {
+            grid-template-columns: 1fr;
+            gap: 24px;
+        }
+        .left-column {
+            position: static;
+        }
+        .profile-card {
+            padding: 24px 20px;
+        }
+        .post-card {
+            padding: 16px 20px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .stats {
+            gap: 20px;
+        }
+        .post-meta {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+        }
+    }
 </style>
 
-<div class="profile-container">
-    <!-- COVER -->
-    <div class="profile-cover"></div>
-
-    <!-- PROFILE CARD -->
-    <div class="profile-card">
-
-        <div class="avatar">
-            {{ profile_user.username|first|upper }}
-        </div>
-
-        <div class="profile-info">
-
-            <h2>{{ profile_user.username }}</h2>
-
-            <p>{{ profile_user.email }}</p>
-
-            <div class="stats">
-
-                <div class="stat-card">
-                    <strong>{{ questions|length }}</strong>
-                    <span>Questions</span>
+<div class="container">
+    <div class="profile-container">
+        <!-- Left Column -->
+        <aside class="left-column">
+            <div class="profile-card">
+                <div class="avatar">{{ profile_user.username|first|upper }}</div>
+                <div class="profile-info">
+                    <h2>{{ profile_user.username }}</h2>
+                    <p>{{ profile_user.email }}</p>
                 </div>
 
-                <div class="stat-card">
-                    <strong>{{ answers|length }}</strong>
-                    <span>Answers</span>
-                </div>
+<div class="follow-section">
+    {% if request.user.is_authenticated and request.user != profile_user %}
 
-            </div>
+        {% if is_following %}
+            <a href="{% url 'unfollow_user' profile_user.id %}" class="btn delete-btn">
+                Unfollow
+            </a>
+        {% else %}
+            <a href="{% url 'follow_user' profile_user.id %}" class="btn edit-btn">
+                Follow
+            </a>
+        {% endif %}
 
-        </div>
-
-    </div>
-
-    <!-- QUESTIONS -->
-    <div class="section">
-
-        <h3 class="section-title">{{ profile_user.username }}'s Questions</h3>
-
-        {% for q in questions %}
-
-        <div class="post-card">
-
-            <div class="post-content">
-
-                <a href="{% url 'question_detail' q.id %}" class="post-title">
-                    {{ q.title }}
-                </a>
-
-                <div class="post-body">
-                    {{ q.body|truncatewords:20 }}
-                </div>
-                <!-- <div class="post-date">
-                    Posted on {{ q.created_at|date:"M d, Y" }}
+    {% endif %}
+</div>
+                <!-- <div class="stats">
+                    <div class="stat-card">
+                        <strong>{{ questions|length }}</strong>
+                        <span>Questions</span>
+                    </div>
+                    <div class="stat-card">
+                        <strong>{{ answers|length }}</strong>
+                        <span>Answers</span>
+                    </div>
                 </div> -->
-            </div>
-
-            <div class="actions">
-
-                <div class="action-buttons">
-
-                    {% if request.user == q.author %}
-
-                        <a href="{% url 'edit_question' q.id %}"
-                        class="btn edit-btn">
-                            Edit
-                        </a>
-
-                        <form id="deleteForm"
-                            method="POST"
-                            action="{% url 'delete_question' q.id %}">
-                            {% csrf_token %}
-
-                            <button type="button"
-                                    class="btn delete-btn"
-                                    onclick="openModal()">
-                                Delete
-                            </button>
-                        </form>
-
-                    {% endif %}
-
-                </div>
-
-                <small class="question-date">
-                    <!-- {{ q.created_at|date:"d M Y" }} -->
-                    Posted on {{ q.created_at|date:"M d, Y" }}
-                </small>
-
-            </div>
-        </div>
-        {% empty %}
-        <div class="empty">No questions posted yet.</div>
-            {% endfor %}
-
-        </div>
-
-    <!-- ANSWERS -->
-    <div class="section">
-
-        <h3 class="section-title">{{ profile_user.username }}'s Answer's</h3>
-
-        {% for a in answers %}
-
-        <div class="post-card">
-
-            <div class="post-content">
-
-                <div class="post-body">
-                    {{ a.body|truncatewords:30 }}
-                </div>
-
-            </div>
-
-            <div class="actions">
-
-                {% if request.user == a.author %}
-
-                    <a href="{% url 'edit_answer' a.id %}"
-                    class="btn edit-btn">
-                        Edit
-                    </a>
-                    
-                    <form method="POST"
-                        action="{% url 'delete_answer' a.id %}"
-                        id="deleteAnswerForm{{ a.id }}">
-
-                        {% csrf_token %}
-
-                        <button type="button"
-                                class="btn delete-btn"
-                                onclick="openAnswerModal('{{ a.id }}')">
-                            Delete
-                        </button>
-
-                    </form>
-
-                {% endif %}
-
-            </div>
-                <small class="question-date">
-        Posted on {{ a.created_at|date:"M d, Y" }}
-    </small>
-        </div>
-
-        {% empty %}
-        <div class="empty">No answers posted yet.</div>
-        {% endfor %}
-
-    </div>
-
+                <div class="stats">
+                    <!-- <div class="stat-card">
+                       <strong>{{ followers_count }}</strong> 
+ 
+                       span>Followers</span> 
+                    </div> -->
+<div class="stat-card" 
+     data-user-id="{{ profile_user.id }}"
+     onclick="openFollowersModal(this)"
+     style="cursor:pointer;">
+    <strong>{{ followers_count }}</strong>
+    <span>Followers</span>
 </div>
 
-<!-- question delete popup -->
+                    <div class="stat-card">
+                        <strong>{{ following_count }}</strong>
+                        <span>Following</span>
+                    </div>
+
+                    <div class="stat-card">
+                        <strong>{{ questions|length }}</strong>
+                        <span>Questions</span>
+                    </div>
+
+                    <div class="stat-card">
+                        <strong>{{ answers|length }}</strong>
+                        <span>Answers</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Middle Column: Questions -->
+         
+        <section class="middle-column">
+            <h2 class="section-title">{{ profile_user.username }}'s Questions</h2>
+            <div class="scroll-box">
+                {% for q in questions %}
+                <article class="post-card">
+                    <a href="{% url 'question_detail' q.id %}" class="post-title">{{ q.title }}</a>
+                    <div class="post-body">{{ q.body|truncatewords:20 }}</div>
+                    <div class="post-meta">
+                        <span>Posted {{ q.created_at|date:"M d, Y" }}</span>👁 {{ q.views }} Views
+                        <div class="action-buttons">
+                            {% if request.user == q.author %}
+                            <a href="{% url 'edit_question' q.id %}" class="btn edit-btn">Edit</a>
+                            <button class="btn delete-btn" onclick="openModal('{{ q.id }}', 'question')">Delete</button>
+                            <form id="delete-form-{{ q.id }}" method="post" action="{% url 'delete_question' q.id %}" style="display:none;">
+                                {% csrf_token %}
+                            </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                </article>
+                {% empty %}
+                <div class="empty-state">
+                    <p>No questions posted yet.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Right Column: Answers -->
+        <div class="right-column">
+            <h2 class="section-title">{{ profile_user.username }}'s Answers</h2>
+            <div class="scroll-box">
+                {% for a in answers %}
+                <article class="post-card">
+                    <div class="post-body">{{ a.body|truncatewords:30 }}</div>
+                    <div class="post-meta">
+                        <span>Posted {{ a.created_at|date:"M d, Y" }}</span>
+                        <div class="action-buttons">
+                            {% if request.user == a.author %}
+                            <a href="{% url 'edit_answer' a.id %}" class="btn edit-btn">Edit</a>
+                            <button class="btn delete-btn" onclick="openModal('{{ a.id }}', 'answer')">Delete</button>
+                            <form id="delete-form-{{ a.id }}" method="post" action="{% url 'delete_answer' a.id %}" style="display:none;">
+                                {% csrf_token %}
+                            </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                </article>
+                {% empty %}
+                <div class="empty-state">
+                    <p>No answers posted yet.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
 <div id="deleteModal" class="modal">
-
     <div class="modal-content">
-
-        <h3>Delete Question</h3>
-
-        <p>
-            This action cannot be undone.
-            Are you sure you want to delete this question?
-        </p>
-
+        <h3>Confirm Delete</h3>
+        <p>This action cannot be undone. Are you sure you want to delete this item?</p>
         <div class="modal-actions">
+            <button class="cancel-btn" onclick="closeModal()">Cancel</button>
+            <button class="confirm-delete-btn" id="confirmDelete">Delete</button>
+        </div>
+    </div>
+</div>
 
-            <button class="cancel-btn"
-                    onclick="closeModal()">
-                Cancel
-            </button>
+<!-- followers popup modal -->
+<div id="followersModal" class="modal">
+        <div class="followers-modal-card" id="followersContent">
 
-            <button class="confirm-btn"
-                    onclick="submitDelete()">
-                Delete
-            </button>
+        <h3>Followers</h3>
 
+        <div id="followersBody">
+            Loading...
+        </div>
+
+        <div style="margin-top:10px; text-align:right;">
+            <button onclick="closeFollowersModal()" class="cancel-btn">Close</button>
         </div>
 
     </div>
-
 </div>
 
-<!-- answer delete popup -->
-<div id="answerDeleteModal" class="modal">
-
-    <div class="modal-content">
-
-        <h3>Delete Answer</h3>
-
-        <p>
-            This action cannot be undone.
-            Are you sure you want to delete this answer?
-        </p>
-
-        <div class="modal-actions">
-
-            <button class="cancel-btn"
-                    onclick="closeAnswerModal()">
-                Cancel
-            </button>
-
-            <button class="confirm-btn"
-                    onclick="submitAnswerDelete()">
-                Delete
-            </button>
-
-        </div>
-
-    </div>
-
-</div>
 <script>
+let deleteFormId = null;
 
-// question delete
-function openModal(){
-    document.getElementById('deleteModal').style.display='flex';
+function openModal(id, type) {
+    document.getElementById('deleteModal').classList.add('active');
+    deleteFormId = `delete-form-${id}`;
 }
 
-function closeModal(){
-    document.getElementById('deleteModal').style.display='none';
+function closeModal() {
+    document.getElementById('deleteModal').classList.remove('active');
+    deleteFormId = null;
 }
 
-function submitDelete(){
-    document.getElementById('deleteForm').submit();
-}
-
-// answer delete
-let currentAnswerForm = null;
-
-function openAnswerModal(answerId){
-
-    currentAnswerForm =
-        document.getElementById(
-            'deleteAnswerForm' + answerId
-        );
-
-    document.getElementById(
-        'answerDeleteModal'
-    ).style.display = 'flex';
-}
-
-function closeAnswerModal(){
-
-    document.getElementById(
-        'answerDeleteModal'
-    ).style.display = 'none';
-}
-
-function submitAnswerDelete(){
-
-    if(currentAnswerForm){
-        currentAnswerForm.submit();
+document.getElementById('confirmDelete').addEventListener('click', function() {
+    if (deleteFormId) {
+        const form = document.getElementById(deleteFormId);
+        if (form) form.submit();
     }
-}
+});
 
+document.getElementById('deleteModal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+});
+
+// follower popup logic
+function openFollowersModal(el) {
+    const userId = el.dataset.userId;
+
+    document.getElementById("followersModal").classList.add("active");
+
+    fetch(`/ajax/followers/${userId}/`)
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById("followersBody").innerHTML = data.html;
+        });
+}
+function closeFollowersModal() {
+    document.getElementById("followersModal").classList.remove("active");
+}
 </script>
-{% endblock %}        
+{% endblock %}

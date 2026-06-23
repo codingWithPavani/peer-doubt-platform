@@ -87,6 +87,36 @@ body{
     font-size:14px;
 }
 
+/* answer badge */
+.accepted-badge{
+    display:inline-block;
+    margin-bottom:12px;
+    padding:6px 14px;
+    background:#dcfce7;
+    color:#166534;
+    border-radius:20px;
+    font-size:13px;
+    font-weight:600;
+}
+
+.accept-btn{
+    display:inline-block;
+    margin-top:12px;
+    padding:8px 14px;
+    background:#16a34a;
+    color:white;
+    border-radius:8px;
+    font-size:14px;
+    font-weight:600;
+    text-decoration:none;
+    transition:0.2s;
+}
+
+.accept-btn:hover{
+    background:#15803d;
+    color:white;
+}
+
 .no-answers{
     text-align:center;
     padding:2rem;
@@ -137,14 +167,14 @@ body{
 }
 
 .answer-form{
-    margin-top:2rem;
+    margin-top:1px;
     padding-top:2rem;
     border-top:2px solid #eef2f7;
 }
 
 .answer-form h3{
     color:#1a1a2e;
-    margin-bottom:1rem;
+    margin-bottom:2px;
 }
 
 #id_body{
@@ -224,7 +254,7 @@ a:hover{
 
         {% for answer in answers %}
 
-        <div class="answer-card">
+        <!-- <div class="answer-card">
 
             <div class="answer-body">
                 {{ answer.body }}
@@ -235,6 +265,34 @@ a:hover{
                                 {{ answer.author.username }}
                             </a>
             </div>
+
+        </div> -->
+
+        <div class="answer-card">
+
+            {% if answer.is_accepted %}
+                <div class="accepted-badge">
+                    ✓ Accepted Answer
+                </div>
+            {% endif %}
+
+            <div class="answer-body">
+                {{ answer.body }}
+            </div>
+
+            <div class="answer-author">
+                Answered by
+                <a href="{% url 'profile' answer.author.id %}">
+                    {{ answer.author.username }}
+                </a>
+            </div>
+
+            {% if request.user == question.author and not answer.is_accepted %}
+                <a href="{% url 'accept_answer' answer.id %}"
+                class="accept-btn">
+                    ✓ Accept Answer
+                </a>
+            {% endif %}
 
         </div>
 
@@ -269,6 +327,7 @@ a:hover{
                 <a href="{% url 'profile' question.author.id %}">
                     {{ question.author.username }}
                 </a>
+                • 👁 {{ question.views }} Views
         </div>
 
         <div class="answer-form">

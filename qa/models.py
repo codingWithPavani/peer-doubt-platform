@@ -23,7 +23,7 @@ class Question(models.Model):
         auto_now_add=True
     )
    
-    views = models.IntegerField(default=0)
+    views = models.PositiveIntegerField(default=0)
     
     def __str__(self):
         return self.title
@@ -53,5 +53,17 @@ class Answer(models.Model):
         auto_now_add=True
     )
 
+    is_accepted = models.BooleanField(
+        default=False
+    )
     def __str__(self):
         return f"Answer by {self.author.username}"
+
+
+class Follow(models.Model):
+    follower = models.ForeignKey(User, on_delete=models.CASCADE, related_name='following_set')
+    following = models.ForeignKey(User, on_delete=models.CASCADE, related_name='followers_set')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('follower', 'following')

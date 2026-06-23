@@ -1,0 +1,42 @@
+{% extends 'qa/base.html' %}
+
+{% block content %}
+
+<div class="container" style="max-width:800px; margin:40px auto;">
+
+    <h2>{{ profile_user.username }}'s Followers</h2>
+
+    {% if followers %}
+
+        {% for f in followers %}
+            <div style="
+                display:flex;
+                align-items:center;
+                justify-content:space-between;
+                padding:12px 16px;
+                margin:10px 0;
+                background:#fff;
+                border-radius:10px;
+                box-shadow:0 2px 6px rgba(0,0,0,0.05);
+            ">
+
+                <div>
+                    <strong>{{ f.follower.username }}</strong><br>
+                    <small>{{ f.follower.email }}</small>
+                </div>
+
+                <a href="{% url 'profile' f.follower.id %}"
+                   style="padding:6px 12px; background:#6366f1; color:white; border-radius:6px; text-decoration:none;">
+                    View Profile
+                </a>
+
+            </div>
+        {% endfor %}
+
+    {% else %}
+        <p>No followers yet.</p>
+    {% endif %}
+
+</div>
+
+{% endblock %}

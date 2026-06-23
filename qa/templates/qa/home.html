@@ -8,12 +8,14 @@
 
 .search-container{
     margin-bottom:30px;
+    margin-top:40px;
 }
 
 .search-container form{
     display:flex;
     gap:12px;
-    max-width:600px;
+    /* max-width:100%; */
+    width: 1170px;
 }
 
 .search-input{
@@ -61,6 +63,8 @@
     margin-bottom:32px;
     border-bottom:1px solid #e2e8f0;
     padding-bottom:16px;
+    text-align: center;
+    align-items: center;
 }
 
 .questions-header h1{
@@ -296,6 +300,10 @@
             <strong>{{ q.answers.count }}</strong>
             <span>Answers</span>
         </div>
+        <!-- <div class="stat">
+            <strong>{{ q.views }}</strong>
+            <span>Views</span>
+        </div> -->
     </div>
 
     <div class="question-content">

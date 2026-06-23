@@ -52,7 +52,27 @@ urlpatterns = [
         views.delete_answer,
         name='delete_answer'
     ),
+    
+    path(
+        'answer/accept/<int:answer_id>/',
+        views.accept_answer,
+        name='accept_answer'
+    ),
 
+    path('follow/<int:user_id>/', views.follow_user, name='follow_user'),
+    path('unfollow/<int:user_id>/', views.unfollow_user, name='unfollow_user'),
+
+    path(
+        'followers/<int:user_id>/',
+        views.followers_list,
+        name='followers_list'
+    ),
+
+    path(
+        'ajax/followers/<int:user_id>/',
+         views.followers_modal,
+         name='followers_modal'
+    ),
 
 ]
 

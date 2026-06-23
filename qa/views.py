@@ -5,6 +5,7 @@ from django.contrib.auth import login
 from django.contrib.auth import logout
 from django.contrib.auth.models import User
 from django.db.models import Q
+from .models import Follow
 
 from django.shortcuts import (
     render,
@@ -58,7 +59,7 @@ def home(request):
     else:
 
         questions = Question.objects.all().order_by(
-            '-created_at'
+            '-created_at'       
         )
 
     return render(
@@ -110,13 +111,19 @@ def ask_question(request):
 def question_detail(
         request,
         pk
-):
+    ):
 
     question = get_object_or_404(
         Question,
         pk=pk
     )
-
+    if f'viewed_{pk}' not in request.session:
+        
+        question.views += 1
+        question.save()
+        
+        request.session[f'viewed_{pk}'] = True
+    
     answers = Answer.objects.filter(
         question=question
     )
@@ -197,13 +204,29 @@ def profile(request, user_id):
         author=user
     )
 
+    followers_count = Follow.objects.filter(following=user).count()
+    following_count = Follow.objects.filter(follower=user).count()
+
+    is_following = False
+    if request.user.is_authenticated:
+        is_following = Follow.objects.filter(
+            follower=request.user,
+            following=user
+        ).exists()
+    print("User:", user.username)
+    print("Followers:", followers_count)
+    print("Following:", following_count)
+
     return render(
         request,
         'qa/profile.html',
         {
             'profile_user': user,
             'questions': questions,
-            'answers': answers
+            'answers': answers,
+            'followers_count': followers_count,
+            'following_count': following_count,
+            'is_following': is_following,
         }
     )
 
@@ -279,7 +302,7 @@ def edit_question(request, pk):
         form = QuestionForm(request.POST, instance=question)
         if form.is_valid():
             form.save()
-            return redirect('profile')
+            return redirect('profile',request.user.id)
 
     else:
         form = QuestionForm(instance=question)
@@ -364,7 +387,18 @@ def user_profile(request, user_id):
         User,
         id=user_id
     )
+    followers_count = Follow.objects.filter(following=user).count()
+    following_count = Follow.objects.filter(follower=user).count()
 
+    is_following = False
+    if request.user.is_authenticated:
+        is_following = Follow.objects.filter(
+            follower=request.user,
+            following=user
+        ).exists()
+    print("User:", user.username)
+    print("Followers:", followers_count)
+    print("Following:", following_count)
     questions = Question.objects.filter(author=user)
     answers = Answer.objects.filter(author=user)
 
@@ -374,6 +408,100 @@ def user_profile(request, user_id):
         {
             'profile_user': user,
             'questions': questions,
-            'answers': answers
+            'answers': answers,
+            'followers_count': followers_count,
+            'following_count': following_count,
+            'is_following': is_following,
         }
     )
+
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def accept_answer(request, answer_id):
+
+    answer = get_object_or_404(
+        Answer,
+        id=answer_id
+    )
+
+    question = answer.question
+
+    if request.user != question.author:
+        return redirect(
+            'question_detail',
+            pk=question.id
+        )
+
+    Answer.objects.filter(
+        question=question
+    ).update(
+        is_accepted=False
+    )
+
+    answer.is_accepted = True
+    answer.save()
+
+    return redirect(
+        'question_detail',
+        pk=question.id
+    )
+
+
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib.auth.models import User
+from .models import Follow
+
+def follow_user(request, user_id):
+    target_user = get_object_or_404(User, id=user_id)
+
+    if request.user == target_user:
+        return redirect('profile', user_id=user_id)
+
+    follow_obj, created = Follow.objects.get_or_create(
+        follower=request.user,
+        following=target_user
+    )
+
+    return redirect('profile', user_id=user_id)
+
+
+def unfollow_user(request, user_id):
+    target_user = get_object_or_404(User, id=user_id)
+
+    Follow.objects.filter(
+        follower=request.user,
+        following=target_user
+    ).delete()
+
+    return redirect('profile', user_id=user_id)
+
+
+@login_required
+def followers_list(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+
+    followers = Follow.objects.filter(following=user).select_related('follower')
+
+    return render(request, 'qa/followers_list.html', {
+        'profile_user': user,
+        'followers': followers
+    })
+
+
+from django.http import JsonResponse
+from django.template.loader import render_to_string
+
+@login_required
+def followers_modal(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+
+    followers = Follow.objects.filter(following=user).select_related('follower')
+
+    html = render_to_string(
+        'qa/partials/followers_modal_list.html',
+        {'followers': followers, 'profile_user': user},
+        request=request
+    )
+
+    return JsonResponse({'html': html})
