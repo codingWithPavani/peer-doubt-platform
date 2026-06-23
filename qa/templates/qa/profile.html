@@ -364,78 +364,140 @@
     overflow-y: auto;
 } */
 
+/* ===== Enhanced Followers & Following Modal ===== */
 
-/* ===== Followers Modal Specific Styles ===== */
-/* ===== Followers Modal – Refined ===== */
-/* ===== Followers Modal Overlay ===== */
-#followersModal.modal {
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+/* reset */
+#followersModal .modal-content,
+#followingModal .modal-content {
+    all: unset;
 }
 
-/* ===== Followers Card (ONLY THIS RULE) ===== */
-#followersModal .followers-modal-card {
-    width: 460px;
-    max-height: 75vh;
-    background: #ffffff;
-    border-radius: 20px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+/* backdrop (apply to both) */
+#followersModal.modal,
+#followingModal.modal {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    background: rgba(15, 23, 42, 0.4);
+}
 
+/* modal card */
+#followersModal .followers-modal-card,
+#followingModal .followers-modal-card {
+    width: 420px;
+    max-height: 70vh;
+    background: #f8fafc;
+    border-radius: 16px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
     display: flex;
     flex-direction: column;
     overflow: hidden;
-
-    animation: pop 0.2s ease;
+    animation: fadeSlide 0.2s ease-out;
 }
 
 /* animation */
-@keyframes pop {
-    from { transform: scale(0.9); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
+@keyframes fadeSlide {
+    from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 
 /* header */
-#followersModal h3 {
-    font-size: 20px;
+#followersModal .modal-header,
+#followingModal .modal-header {
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* title */
+#followersModal .modal-header h3,
+#followingModal .modal-header h3 {
+    font-size: 18px;
     font-weight: 700;
     color: #0f172a;
-    margin-bottom: 14px;
+    margin: 0;
+    letter-spacing: -0.01em;
 }
 
-/* scroll area */
-#followersBody {
+/* close button */
+#followersModal .close-btn,
+#followingModal .close-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: none;
+    background: #f1f5f9;
+    color: #64748b;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+#followersModal .close-btn:hover,
+#followingModal .close-btn:hover {
+    background: #e2e8f0;
+    color: #0f172a;
+}
+
+/* body scroll */
+#followersBody,
+#followingBody {
     overflow-y: auto;
+    padding: 8px 0;
     flex: 1;
-    padding: 10px;
 }
 
-/* follower item */
+/* scrollbar */
+#followersBody::-webkit-scrollbar,
+#followingBody::-webkit-scrollbar {
+    width: 5px;
+}
+
+#followersBody::-webkit-scrollbar-track,
+#followingBody::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#followersBody::-webkit-scrollbar-thumb,
+#followingBody::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+
+/* list item */
 .follower-item {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-
-    padding: 12px;
-    border-radius: 12px;
-    transition: 0.2s;
-    border-bottom: 1px solid #f1f5f9;
+    justify-content: space-between;
+    padding: 10px 24px;
+    transition: background 0.15s;
 }
 
 .follower-item:hover {
     background: #f8fafc;
 }
 
-/* left side */
+/* user info */
 .follower-info {
     display: flex;
     align-items: center;
     gap: 12px;
+    min-width: 0;
 }
 
 /* avatar */
 .follower-avatar {
-    width: 42px;
-    height: 42px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     background: linear-gradient(135deg, #6366f1, #8b5cf6);
     display: flex;
@@ -443,47 +505,62 @@
     justify-content: center;
     color: white;
     font-weight: 600;
+    font-size: 15px;
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.2);
 }
 
-/* name */
+/* details */
+.follower-details {
+    min-width: 0;
+}
+
 .follower-name {
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 600;
     color: #0f172a;
     text-decoration: none;
+    display: block;
+    line-height: 1.3;
 }
 
 .follower-name:hover {
     color: #6366f1;
 }
 
-/* username */
 .follower-username {
     font-size: 13px;
     color: #94a3b8;
+    display: block;
+    line-height: 1.3;
 }
 
 /* button */
 .view-btn {
-    padding: 6px 12px;
-    background: #6366f1;
-    color: white;
+    padding: 6px 14px;
+    background: #f1f5f9;
+    color: #475569;
     border-radius: 8px;
     font-size: 13px;
+    font-weight: 500;
     text-decoration: none;
+    transition: all 0.2s;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .view-btn:hover {
-    background: #4f46e5;
+    background: #6366f1;
+    color: #ffffff;
 }
 
 /* empty state */
 .empty-followers {
     text-align: center;
-    padding: 40px;
+    padding: 48px 24px;
     color: #94a3b8;
+    font-size: 14px;
 }
-
     /* ===== Responsive ===== */
     @media (max-width: 1024px) {
         .profile-container {
@@ -564,15 +641,18 @@
  
                        span>Followers</span> 
                     </div> -->
-<div class="stat-card" 
-     data-user-id="{{ profile_user.id }}"
-     onclick="openFollowersModal(this)"
-     style="cursor:pointer;">
-    <strong>{{ followers_count }}</strong>
-    <span>Followers</span>
-</div>
+                    <div class="stat-card" 
+                        data-user-id="{{ profile_user.id }}"
+                        onclick="openFollowersModal(this)"
+                        style="cursor:pointer;">
+                        <strong>{{ followers_count }}</strong>
+                        <span>Followers</span>
+                    </div>
 
-                    <div class="stat-card">
+                    <div class="stat-card"
+                        data-user-id="{{ profile_user.id }}"
+                        onclick="openFollowingModal(this)"
+                        style="cursor:pointer;">
                         <strong>{{ following_count }}</strong>
                         <span>Following</span>
                     </div>
@@ -663,7 +743,7 @@
 </div>
 
 <!-- followers popup modal -->
-<div id="followersModal" class="modal">
+<!-- <div id="followersModal" class="modal">
         <div class="followers-modal-card" id="followersContent">
 
         <h3>Followers</h3>
@@ -677,8 +757,42 @@
         </div>
 
     </div>
+</div> -->
+<!-- Followers Modal -->
+<div id="followersModal" class="modal">
+    <div class="followers-modal-card">
+        <div class="modal-header">
+            <h3>Followers</h3>
+            <button class="close-btn" onclick="closeFollowersModal()">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M12 4L4 12M4 4l8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </button>
+        </div>
+        <div id="followersBody">
+            Loading...
+        </div>
+    </div>
 </div>
 
+<!-- following modal -->
+<div id="followingModal" class="modal">
+    <div class="followers-modal-card">
+
+        <div class="modal-header">
+            <h3>Following</h3>
+
+            <button class="close-btn" onclick="closeFollowingModal()">
+                ✕
+            </button>
+        </div>
+
+        <div id="followingBody">
+            Loading...
+        </div>
+
+    </div>
+</div>
 <script>
 let deleteFormId = null;
 
@@ -717,6 +831,22 @@ function openFollowersModal(el) {
 }
 function closeFollowersModal() {
     document.getElementById("followersModal").classList.remove("active");
+}
+// following popup logic
+function openFollowingModal(el) {
+    const userId = el.dataset.userId;
+
+    document.getElementById("followingModal").classList.add("active");
+
+    fetch(`/ajax/following/${userId}/`)
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById("followingBody").innerHTML = data.html;
+        });
+}
+
+function closeFollowingModal() {
+    document.getElementById("followingModal").classList.remove("active");
 }
 </script>
 {% endblock %}

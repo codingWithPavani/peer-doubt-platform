@@ -1,0 +1,28 @@
+{% for f in following %}
+<div class="follower-item">
+
+    <div class="follower-info">
+        <div class="follower-avatar">
+            {{ f.following.username|first|upper }}
+        </div>
+
+        <div>
+            <a href="{% url 'profile' f.following.id %}" class="follower-name">
+                {{ f.following.username }}
+            </a>
+            <div class="follower-username">
+                {{ f.following.email }}
+            </div>
+        </div>
+    </div>
+
+    <a href="{% url 'profile' f.following.id %}" class="view-btn">
+        View
+    </a>
+
+</div>
+{% empty %}
+<div class="empty-followers">
+    No following yet
+</div>
+{% endfor %}

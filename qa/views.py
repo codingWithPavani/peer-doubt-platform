@@ -505,3 +505,20 @@ def followers_modal(request, user_id):
     )
 
     return JsonResponse({'html': html})
+
+@login_required
+def ajax_following(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+
+    following = Follow.objects.filter(follower=user).select_related('following')
+
+    html = render_to_string(
+        "qa/partials/following_modal_list.html",
+        {
+            "following": following,
+            "profile_user": user
+        },
+        request=request
+    )
+
+    return JsonResponse({"html": html})

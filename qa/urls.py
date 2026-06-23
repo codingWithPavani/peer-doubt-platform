@@ -73,7 +73,8 @@ urlpatterns = [
          views.followers_modal,
          name='followers_modal'
     ),
-
+    
+    path('ajax/following/<int:user_id>/', views.ajax_following, name='ajax_following'),
 ]
 
 
